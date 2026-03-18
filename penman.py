@@ -92,7 +92,7 @@ for year in years:
 
         # Calculations:
         # Net Radiation
-        Rn = net_radiation.computeNetRadiation(elevation, date, lats, len(lons),
+        Rn = net_radiation.computeNetRadiation(elevation, date, lats, lons,
                                                 tmax, tmin, vap, srad, albedo)
 
         # Shear velocity of winds
