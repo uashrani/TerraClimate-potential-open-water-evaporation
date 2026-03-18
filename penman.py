@@ -38,8 +38,8 @@ elevation_nc = nc4.Dataset(TerraClimateDir+'Gebco_2020_2_point_5_arcminute.nc')
 elevation = extract_data(elevation_nc, 'value')
 elevation = elevation[::-1]
 
-# Heat capacity of air
-specific_heat_capacity_of_air = 1.005 # approx. constant at 1 atm
+# Heat capacity of air in J / (kg K)
+specific_heat_capacity_of_air = 1005 # approx. constant at 1 atm
                                       # Humidity minor impact below 40C or so
                                       # But this is an approximation!
 cp = specific_heat_capacity_of_air # Easier
@@ -101,6 +101,7 @@ for year in years:
         # Vapor-pressure deficit
         # We don't have max and min humidity
         VPD = atmospheric_parameters.compute_vpd( (tmax+tmin)/2., vap )
+        VPD = VPD * 1000  # Pa
 
         # Atmospheric pressure
         P = atmospheric_parameters.compute_atmospheric_pressure(elevation)
@@ -114,9 +115,10 @@ for year in years:
                   + atmospheric_parameters.compute_Delta_e_sat( tmin ) ) / 2.
 
         _E = (Rn + cp*rho_a*ustar**2/(Delta*ws) * VPD) \
-             / ( rho_w*Lv  + P*cp*rho_w/epsilon )
+             / ( rho_w*Lv  + P*cp*rho_w/(epsilon*Delta) )
         _E[_E<0] = 0 # ignore condensation; I think it's spurious (Antarctica?)
-        E += _E*days_in_month[month_zi]
+        unitConv = 86400    # to go from m/s to m/d
+        E += _E*days_in_month[month_zi]*unitConv
 
 E /= (365.25*len(years))
 
