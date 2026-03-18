@@ -120,7 +120,7 @@ for year in years:
         unitConv = 86400    # to go from m/s to m/d
         E += _E*days_in_month[month_zi]*unitConv
 
-E /= (365.25*len(years))
+E /= len(years)        # divide by number of years so you get average evaporation per year (m/yr)
 
 
 # Export
